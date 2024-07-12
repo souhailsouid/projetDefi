@@ -25,6 +25,12 @@ jobs:
           cd backend
           npm install
 
+      - name: Set up environment variables
+        run: |
+          echo "ALCHEMY_API_KEY=${{ secrets.ALCHEMY_API_KEY }}" >> $GITHUB_ENV
+          echo "METAMASK_PRIVATE_KEY=${{ secrets.METAMASK_PRIVATE_KEY }}" >> $GITHUB_ENV
+          echo "ETHERSCAN_API_KEY=${{ secrets.ETHERSCAN_API_KEY }}" >> $GITHUB_ENV
+
       - name: Run Hardhat tests
         run: |
           cd backend
@@ -57,4 +63,9 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           cd frontend
-          npx vercel --prod --token $VERCEL_TOKEN
+          DEPLOY_URL=$(npx vercel --prod --token $VERCEL_TOKEN | tail -n 1)
+          echo "Deployment URL: $DEPLOY_URL"
+          echo "DEPLOY_URL=$DEPLOY_URL" >> $GITHUB_ENV
+
+      - name: Output Deployment URL
+        run: echo "The application is deployed to $DEPLOY_URL"

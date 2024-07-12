@@ -2,7 +2,7 @@
 
 import { useAccount } from 'wagmi';
 import Asset from './Asset';
-import { Dashboard } from '@/components/shared/Dashboard';
+import { Dashboard } from '@/components/shared/dashboard';
 
 const HomeDashboard = () => {
   const { address } = useAccount();

@@ -169,82 +169,82 @@ console.log('linkfinall????')
     // const daiBalanceAfter = await link.balanceOf(deployer.address);
     // expect(daiBalanceAfter).to.be.gt(depositAmount - withdrawAmount);
   });
-  it.only("should deposit USDC and borrow USDC from Aave", async function () {
-    const depositAmount = ethers.parseUnits("2000", 6); // 2000 DAI
-    const deposit2Amount = ethers.parseUnits("6000", 6); // 2000 DAI
-    const borrowAmount = ethers.parseUnits("20", 6); // 100 USDC
-    const interestRateMode = 2; // 1 for stable, 2 for variable
+//   it("should deposit USDC and borrow LINK from Aave", async function () {
+//     const depositAmount = ethers.parseUnits("2000", 6); // 2000 DAI
+//     const deposit2Amount = ethers.parseUnits("6000", 6); // 2000 DAI
+//     const borrowAmount = ethers.parseUnits("200", 6); // 100 Link
+//     const interestRateMode = 2; // 1 for stable, 2 for variable
 
-    // Approve the AaveWrite contract to spend DAI
-    await usdc.approve(aaveWrite.target, depositAmount);
-    await usdt.approve(aaveWrite.target, deposit2Amount);
+//     // Approve the AaveWrite contract to spend DAI
+//     await usdc.approve(aaveWrite.target, depositAmount);
+//     await usdt.approve(aaveWrite.target, deposit2Amount);
 
-    // Perform the deposit
-    await expect(aaveWrite.deposit(usdcAddress, depositAmount))
-        .to.emit(aaveWrite, 'Deposit')
-      .withArgs(deployer.address, usdcAddress, depositAmount);
+//     // Perform the deposit
+//     await expect(aaveWrite.deposit(usdcAddress, depositAmount))
+//         .to.emit(aaveWrite, 'Deposit')
+//       .withArgs(deployer.address, usdcAddress, depositAmount);
     
-      await expect(aaveWrite.deposit(usdtAddress, deposit2Amount))
-        .to.emit(aaveWrite, 'Deposit')
-        .withArgs(deployer.address, usdtAddress, deposit2Amount);
+//       await expect(aaveWrite.deposit(usdtAddress, deposit2Amount))
+//         .to.emit(aaveWrite, 'Deposit')
+//         .withArgs(deployer.address, usdtAddress, deposit2Amount);
 
 
-    // Check the aToken balance after deposit
-    console.log('Checking aToken balance after deposit');
-    const aTokenBalanceAfter = await aToken.balanceOf(deployer.address);
-    expect(aTokenBalanceAfter).to.be.gt(0);
-    console.log('aTokenBalanceAfter', aTokenBalanceAfter.toString());
+//     // Check the aToken balance after deposit
+//     console.log('Checking aToken balance after deposit');
+//     const aTokenBalanceAfter = await aToken.balanceOf(deployer.address);
+//     expect(aTokenBalanceAfter).to.be.gt(0);
+//     console.log('aTokenBalanceAfter', aTokenBalanceAfter.toString());
 
-    // Retrieve and log user account data
-    const userAccountData = await aaveWrite.getUserAccountData(deployer.address);
-    console.log('User Account Data:', userAccountData);
-    console.log('Total Collateral (ETH):', userAccountData.totalCollateralETH.toString());
-    console.log('Total Debt (ETH):', userAccountData.totalDebtETH.toString());
-    console.log('Available Borrows (ETH):', userAccountData.availableBorrowsETH.toString());
-    console.log('Current Liquidation Threshold:', userAccountData.currentLiquidationThreshold.toString());
-    console.log('LTV:', userAccountData.ltv.toString());
-    console.log('Health Factor:', userAccountData.healthFactor.toString());
+//     // Retrieve and log user account data
+//     const userAccountData = await aaveWrite.getUserAccountData(deployer.address);
+//     console.log('User Account Data:', userAccountData);
+//     console.log('Total Collateral (ETH):', userAccountData.totalCollateralETH.toString());
+//     console.log('Total Debt (ETH):', userAccountData.totalDebtETH.toString());
+//     console.log('Available Borrows (ETH):', userAccountData.availableBorrowsETH.toString());
+//     console.log('Current Liquidation Threshold:', userAccountData.currentLiquidationThreshold.toString());
+//     console.log('LTV:', userAccountData.ltv.toString());
+//     console.log('Health Factor:', userAccountData.healthFactor.toString());
 
-    // Check available borrow amounts and ensure sufficient collateral
-    // if (userAccountData.availableBorrowsETH.eq(0)) {
-    //     console.error('Insufficient borrowing capacity.');
-    //     return;
-    // }
+//     // Check available borrow amounts and ensure sufficient collateral
+//     // if (userAccountData.availableBorrowsETH.eq(0)) {
+//     //     console.error('Insufficient borrowing capacity.');
+//     //     return;
+//     // }
 
     
-      // await debtTokenUsdt.approve(aaveWrite.target, borrowAmount);
-      // await debtToken.approve(aaveWrite.target, borrowAmount);
-    await usdc.approve(aaveWrite.target, borrowAmount);
-       await debtToken.approve(aaveWrite.target, borrowAmount);
-      // await usdt.approve(aaveWrite.target, borrowAmount);
-      // await link.approve(aaveWrite.target, borrowAmount);
+//       // await debtTokenUsdt.approve(aaveWrite.target, borrowAmount);
+//       // await debtToken.approve(aaveWrite.target, borrowAmount);
+//     await link.approve(aaveWrite.target, borrowAmount);
+//       //  await debtToken.approve(aaveWrite.target, borrowAmount);
+//       // await usdt.approve(aaveWrite.target, borrowAmount);
+//       // await link.approve(aaveWrite.target, borrowAmount);
 
-      await expect(aaveWrite.borrow(usdcAddress, borrowAmount, interestRateMode))
-        .to.emit(aaveWrite, 'Borrow')
-        .withArgs(deployer.address, linkAddress, borrowAmount);
-      console.log('Borrowed');
+//       await expect(aaveWrite.borrow(linkAddress, borrowAmount, interestRateMode))
+//         .to.emit(aaveWrite, 'Borrow')
+//         .withArgs(deployer.address, linkAddress, borrowAmount);
+//       console.log('Borrowed');
 
    
    
-    // Check the debt token balance after borrow
-    const debtTokenBalanceAfterBorrow = await debtToken.balanceOf(deployer.address);
-    expect(debtTokenBalanceAfterBorrow).to.be.gt(0);
-    console.log('debtTokenBalanceAfterBorrow', debtTokenBalanceAfterBorrow.toString());
+//     // Check the debt token balance after borrow
+//     const debtTokenBalanceAfterBorrow = await debtToken.balanceOf(deployer.address);
+//     expect(debtTokenBalanceAfterBorrow).to.be.gt(0);
+//     console.log('debtTokenBalanceAfterBorrow', debtTokenBalanceAfterBorrow.toString());
 
-    // Approve the AaveWrite contract to spend USDC for repayment
-    // await usdc.approve(aaveWrite.target, borrowAmount);
+//     // Approve the AaveWrite contract to spend USDC for repayment
+//     // await usdc.approve(aaveWrite.target, borrowAmount);
 
-    // // Perform the repay
-    // await expect(aaveWrite.repay(usdcAddress, borrowAmount, interestRateMode))
-    //     .to.emit(aaveWrite, 'Repay')
-    //     .withArgs(deployer.address, usdcAddress, borrowAmount);
+//     // // Perform the repay
+//     // await expect(aaveWrite.repay(usdcAddress, borrowAmount, interestRateMode))
+//     //     .to.emit(aaveWrite, 'Repay')
+//     //     .withArgs(deployer.address, usdcAddress, borrowAmount);
 
-    // // Check the debt token balance after repay
-    // const debtTokenBalanceAfterRepay = await debtToken.balanceOf(deployer.address);
-    // expect(debtTokenBalanceAfterRepay).to.be.lt(debtTokenBalanceAfterBorrow);
-    // console.log('debtTokenBalanceAfterRepay', debtTokenBalanceAfterRepay.toString());
-});
-  // it.only("should borrow USDC from Aave", async function () {
+//     // // Check the debt token balance after repay
+//     // const debtTokenBalanceAfterRepay = await debtToken.balanceOf(deployer.address);
+//     // expect(debtTokenBalanceAfterRepay).to.be.lt(debtTokenBalanceAfterBorrow);
+//     // console.log('debtTokenBalanceAfterRepay', debtTokenBalanceAfterRepay.toString());
+// });
+  // it("should borrow USDC from Aave", async function () {
   //   const borrowAmount = ethers.parseUnits("100", 6);
 
   //   // Ensure sufficient collateral is deposited
@@ -311,3 +311,9 @@ console.log('linkfinall????')
   //   expect(usdcBalanceAfter).to.be.lt(borrowAmount);
   // });
 });
+
+
+
+// je depose de l'usdc
+
+// j'embrunte de wbtc

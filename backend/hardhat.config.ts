@@ -16,6 +16,7 @@ const config: HardhatUserConfig = {
       forking: {
         enabled: true,
         url: `https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+        blockNumber: 6297283
       },
     },
     sepolia: {

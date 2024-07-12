@@ -10,6 +10,7 @@
     "@bgd-labs/aave-address-book": "^2.30.0",
     "@chainlink/contracts": "^1.1.1",
     "@openzeppelin/contracts": "^5.0.2",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "web3": "^4.11.0"
   }
 }
