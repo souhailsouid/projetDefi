@@ -12,10 +12,7 @@ import {
 import { useGetWalletBalance } from '@/hooks/useGetBalance';
 const SelectAsset = ({ placeholder, setAssetSelected, width }) => {
   const {
-    walletBalanceData,
     tokenToSupply,
-    errorWalletBalance,
-    isUserWalletBalanceLoading,
   } = useGetWalletBalance();
 
 
@@ -56,7 +53,6 @@ export default SelectAsset;
 
 export function SelectWithdrawsAsset ({ placeholder, setAssetSelected, width, tokenToSupply }) {
 
-
   const handleSelect = (value) => {
     setAssetSelected(value);
   };
@@ -76,6 +72,38 @@ const dynamiqueClass = width ? width:  'w-full'
                 {item.symbol.split("aEth")[1]}
               </SelectItem>
             ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+     
+    </div>
+  );
+};
+
+export function SelectDepositAsset ({ placeholder, setAssetSelected, width, tokenToSupply }) {
+
+  const handleSelect = (value) => {
+    setAssetSelected(value);
+  };
+
+const dynamiqueClass = width ? width:  'w-full' 
+  return (
+    <div className={dynamiqueClass}>
+      <Select onValueChange={handleSelect}>
+        <SelectTrigger className="">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Token</SelectLabel>
+            {tokenToSupply && tokenToSupply?.map((item) => {
+              console.log('item', item)
+              return (
+                <SelectItem key={item} value={item}>
+                  {item}
+                </SelectItem>
+              )
+            })}
           </SelectGroup>
         </SelectContent>
       </Select>

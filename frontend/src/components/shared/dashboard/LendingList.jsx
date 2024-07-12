@@ -98,30 +98,37 @@ const strategiesData = {
   // Define other strategies data
 };
 
-export function LendingList({assetSelected}) {
-
-
+export function LendingList({ assetSelected }) {
   const { suppliedList, errorGetATokenBalances, isAtokenBalanceLoading } =
     useGetATokenBalances();
   const { getTheLatestPrice, errorGetLatestPrice, isPriceLoading } =
     getLatestPrice();
-  
-
 
   const showValueInUsdc = (token) => {
-    if (['USDC', "USDT", "DAI"].includes(token.symbol?.split('aEth')[1])) {
-      return `${formatUnitsToFixed(token.value.toString(), token.decimals, 2)} $`;
+    const latestPriceEntry = getTheLatestPrice?.find(
+      (priceEntry) => priceEntry.symbol === token.symbol?.split('aEth')[1]
+    );
+    const assetInUsdc = formatUnitsToFixed(
+      token.value.toString(),
+      token?.decimals,
+      2
+    );
+
+    const priceInUsdc = assetInUsdc * latestPriceEntry.price;
+
+    if (latestPriceEntry) {
+      return `${latestPriceEntry.price} $ / ${priceInUsdc?.toFixed(2)?.toString()} $ `;
     }
-    
-    const latestPriceEntry = getTheLatestPrice?.find(priceEntry => priceEntry.symbol === token.symbol?.split('aEth')[1]);
-  if (latestPriceEntry) {
-    return `${formatUnitsToFixed(latestPriceEntry.price.toString(), 6, 2)} $`;
-  }
 
-  return 'Fetching...';
-};
+    return 'Fetching...';
+  };
 
-const showList = assetSelected === "ALL TOKENS" ? suppliedList : suppliedList?.filter((token) => token.symbol.split('aEth')[1] === assetSelected);
+  const showList =
+    assetSelected === 'ALL TOKENS'
+      ? suppliedList
+      : suppliedList?.filter(
+          (token) => token.symbol.split('aEth')[1] === assetSelected
+        );
   return (
     <div
       style={{
@@ -151,7 +158,6 @@ const showList = assetSelected === "ALL TOKENS" ? suppliedList : suppliedList?.f
         <Table>
           <TableBody>
             {showList?.map((token, index) => {
-           
               return (
                 <TableRow key={index}>
                   <TableCell className="font-medium">
@@ -179,24 +185,21 @@ const showList = assetSelected === "ALL TOKENS" ? suppliedList : suppliedList?.f
                       token.value.toString(),
                       token.decimals,
                       2
-                    )} {' '}
+                    )}{' '}
                     {token.symbol.split('aEth')[1]} /
                     <br />
                     {showValueInUsdc(token)}
                   </TableCell>
 
                   <TableCell className="text-right">
-                    <select
-                      className="border border-gray-300 rounded px-2 py-1"
-                  
-                    >
+                    <select className="border border-gray-300 rounded px-2 py-1">
                       <option value="APR">APR</option>
                       <option value="CR">CR</option>
                     </select>
                   </TableCell>
                   <TableCell className="text-right">12%</TableCell>
                 </TableRow>
-              )
+              );
             })}
           </TableBody>
         </Table>

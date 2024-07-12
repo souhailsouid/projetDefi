@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useReadContracts } from 'wagmi';
 import { contractAddress, contractAbi } from '@/constants';
+import { formatUnitsToFixed } from '@/utils/format';
 
 export const getLatestPrice = () => {
   const [isPriceLoading, setIsLoading] = useState(true);
@@ -32,7 +33,7 @@ export const getLatestPrice = () => {
       setLatestPrice(
         oracleAddressFromChainLink.map(([symbol], i) => ({
           symbol: symbol,
-          price: data[i].result,
+          price: formatUnitsToFixed(data[i].result?.toString(), 8, 2),
         }))
       );
 

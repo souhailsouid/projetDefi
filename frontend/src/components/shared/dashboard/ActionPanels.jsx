@@ -4,7 +4,7 @@ import SelectContentFromAction from '@/components/shared/forms/SelectContentFrom
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import SelectAsset from '@/components/shared/forms/SelectAsset';
-import { DrawerDemo } from '@/components/shared/forms/PopoverDemo';
+import { SupplyButton } from '@/components/shared/forms/SupplyButton';
 import { WithdrawButton } from '@/components/shared/forms/withdraw';
 const ActionPanel = ({ setActionContent, setAssetSelected }) => {
   const [minted, setMinted] = React.useState(false);
@@ -19,7 +19,7 @@ const ActionPanel = ({ setActionContent, setAssetSelected }) => {
         <SelectAsset placeholder="Token" setAssetSelected={setAssetSelected} width="w-[180px]"  />
       
        
-        <DrawerDemo />
+        <SupplyButton />
         <WithdrawButton/>
    
 
