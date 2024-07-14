@@ -53,6 +53,10 @@ jobs:
           cd frontend
           npm install
 
+      - name: Set up environment variables
+        run: |
+          echo "NEXT_PUBLIC_RAINBOWKIT_PROJECT_ID=${{ secrets.NEXT_PUBLIC_RAINBOWKIT_PROJECT_ID }}" > frontend/.env.local
+
       - name: Build Next.js application
         run: |
           cd frontend

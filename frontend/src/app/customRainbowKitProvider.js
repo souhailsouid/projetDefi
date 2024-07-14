@@ -8,7 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 
 export const config = getDefaultConfig({
   appName: 'My RainbowKit App',
-  projectId: process.env.NEXT_PUBLIC_RAINBOWKIT_PROJECT_ID,
+  projectId: "993b08e22e1c412bbcecfa71832a9b98",
   chains: [hardhat, sepolia],
   ssr: true, // If your dApp uses server side rendering (SSR)
 });
