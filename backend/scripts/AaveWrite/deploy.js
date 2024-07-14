@@ -9,7 +9,8 @@ async function main() {
     const AaveLendingPoolInteractor = await ethers.getContractFactory("AaveWrite");
     const aaveLendingPoolInteractor = await AaveLendingPoolInteractor.deploy(
         AaveV3Sepolia.POOL_ADDRESSES_PROVIDER,
-        AaveV3Sepolia.AAVE_PROTOCOL_DATA_PROVIDER
+        AaveV3Sepolia.AAVE_PROTOCOL_DATA_PROVIDER,
+        AaveV3Sepolia.POOL
     );
 
     await aaveLendingPoolInteractor.waitForDeployment();

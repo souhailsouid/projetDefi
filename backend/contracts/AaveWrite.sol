@@ -7,6 +7,12 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@aave/core-v3/contracts/interfaces/IPoolDataProvider.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
+interface IERC20Detailed {
+    function symbol() external view returns (string memory);
+
+    function decimals() external view returns (uint8);
+}
+
 contract AaveWrite is ReentrancyGuard {
     IPoolAddressesProvider internal immutable provider;
     IPoolDataProvider internal immutable dataProvider;
@@ -28,14 +34,6 @@ contract AaveWrite is ReentrancyGuard {
         uint256 balanceAfter,
         uint256 withdrawnAmount
     );
-    event Borrow(
-        address indexed user,
-        address indexed asset,
-        uint256 amount,
-        uint256 interestRateMode,
-        uint256 balanceBeforeBorrow,
-        uint256 balanceAfterBorrow
-    );
 
     event Repay(
         address indexed user,
@@ -50,6 +48,8 @@ contract AaveWrite is ReentrancyGuard {
     );
     event LogError(string reason);
 
+    event LogWithdrawAmount(uint256 amount);
+
     constructor(
         IPoolAddressesProvider _provider,
         IPoolDataProvider _dataProvider,
@@ -63,6 +63,9 @@ contract AaveWrite is ReentrancyGuard {
     }
 
     function deposit(address token, uint256 amount) external nonReentrant {
+        uint256 allowance = IERC20(token).allowance(msg.sender, address(this));
+        require(allowance >= amount, "Insufficient allowance");
+
         uint256 balanceBefore = IERC20(token).balanceOf(msg.sender);
 
         require(
@@ -71,11 +74,23 @@ contract AaveWrite is ReentrancyGuard {
         );
         require(IERC20(token).approve(poolAddress, amount), "Approve failed");
 
-        pool.deposit(token, amount, msg.sender, 0);
+        try pool.deposit(token, amount, msg.sender, 0) {
+            uint256 balanceAfter = IERC20(token).balanceOf(msg.sender);
 
-        uint256 balanceAfter = IERC20(token).balanceOf(msg.sender);
+            require(balanceAfter < balanceBefore, "No tokens were deposited");
 
-        emit Deposit(msg.sender, token, amount, balanceBefore, balanceAfter);
+            emit Deposit(
+                msg.sender,
+                token,
+                amount,
+                balanceBefore,
+                balanceAfter
+            );
+        } catch Error(string memory reason) {
+            emit LogError(reason);
+        } catch {
+            emit LogError("Deposit failed with low-level data");
+        }
     }
 
     function withdraw(
@@ -84,18 +99,27 @@ contract AaveWrite is ReentrancyGuard {
         uint256 amount
     ) external nonReentrant {
         uint256 balanceBefore = IERC20(asset).balanceOf(msg.sender);
-
+        // Check if the contract has enough allowance to transfer the tokens
+        uint256 allowance = IERC20(aToken).allowance(msg.sender, address(this));
+        require(allowance >= amount, "Insufficient allowance");
+        // Transfer the aTokens from the user to this contract
         require(
             IERC20(aToken).transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
+        // Approve the pool contract to spend the aTokens
         require(IERC20(aToken).approve(poolAddress, amount), "Approve failed");
-        try pool.withdraw(asset, amount, msg.sender) {
+        // Withdraw from the pool
+        try pool.withdraw(asset, amount, msg.sender) returns (
+            uint256 returnedAmount
+        ) {
             uint256 balanceAfter = IERC20(asset).balanceOf(msg.sender);
 
             uint256 withdrawnAmount = balanceAfter - balanceBefore;
 
             require(withdrawnAmount > 0, "No tokens were withdrawn");
+
+            emit LogWithdrawAmount(returnedAmount);
 
             emit LogBalance(balanceBefore, balanceAfter, withdrawnAmount);
             emit Withdraw(
@@ -113,53 +137,34 @@ contract AaveWrite is ReentrancyGuard {
         }
     }
 
-    function borrow(
-        address asset,
-        uint256 amount,
-        uint256 interestRateMode
-    ) external nonReentrant {
-        require(amount > 0, "Borrow amount must be greater than 0");
-
-        (, , uint256 availableBorrowsETH, , , ) = pool.getUserAccountData(
-            msg.sender
-        );
-
-        require(
-            availableBorrowsETH >= amount,
-            "Insufficient borrowing capacity"
-        );
-
-        uint256 balanceBefore = IERC20(asset).balanceOf(msg.sender);
-
-        pool.borrow(asset, amount, interestRateMode, 0, msg.sender);
-
-        uint256 balanceAfterBorrow = IERC20(asset).balanceOf(msg.sender);
-
-        emit Borrow(
-            msg.sender,
-            asset,
-            amount,
-            interestRateMode,
-            balanceBefore,
-            balanceAfterBorrow
-        );
-    }
-
     function repay(
         address asset,
         uint256 amount,
         uint256 interestRateMode
     ) external nonReentrant {
+        uint256 allowance = IERC20(asset).allowance(msg.sender, address(this));
+        require(allowance >= amount, "Insufficient allowance");
+
+        uint256 balanceBefore = IERC20(asset).balanceOf(msg.sender);
+
         require(
             IERC20(asset).transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
         require(IERC20(asset).approve(poolAddress, amount), "Approve failed");
 
-        pool.repay(asset, amount, interestRateMode, msg.sender);
+        try pool.repay(asset, amount, interestRateMode, msg.sender) returns (
+            uint256 repaidAmount
+        ) {
+            require(repaidAmount == amount, "Repay amount mismatch");
 
-        uint256 balanceAfterRepay = IERC20(asset).balanceOf(msg.sender);
+            uint256 balanceAfterRepay = IERC20(asset).balanceOf(msg.sender);
 
-        emit Repay(msg.sender, asset, amount, balanceAfterRepay);
+            require(balanceAfterRepay < balanceBefore, "No tokens were repaid");
+
+            emit Repay(msg.sender, asset, amount, balanceAfterRepay);
+        } catch Error(string memory reason) {
+            emit LogError(reason);
+        }
     }
 }

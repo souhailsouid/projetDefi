@@ -1,14 +1,7 @@
 const { AaveV3Sepolia } = require("@bgd-labs/aave-address-book");
 const { ethers } = require("hardhat");
-const USDC_WHALE = "0x9791fDF86Cc0133A96cFc56129151dF3d5E32615";
 
 async function main() {
-    // {
-    //     await network.provider.request({
-    //         method: "hardhat_impersonateAccount",
-    //         params: [USDC_WHALE],
-    //     });
-    // }
 
     const [deployer] = await ethers.getSigner();
 
@@ -23,6 +16,7 @@ async function main() {
 
     await aaveLendingPoolInteractor.waitForDeployment();
     const addressContract = aaveLendingPoolInteractor.target;
+    
     console.log("AaveLendingPoolInteractor deployed to:", addressContract);
 
     

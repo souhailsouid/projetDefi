@@ -174,43 +174,42 @@ describe("AaveWrite Contract", function () {
       .to.emit(aaveWrite, 'Withdraw')
       .withArgs(deployer.address, daiAddress, amountToWithdraw, balanceBefore, balanceAfter, checkWithdrawned);
   });
-  
-  it("should withdraw LINK from Aave", async function () {
-    const depositAmount = ethers.parseUnits("0.3", decimalsLink);
-    const withdrawAmount = ethers.parseUnits("0.12", decimalsLink);
 
-    // Approve the AaveWrite contract to spend LINK
-    await link.approve(aaveWrite.target, depositAmount);
+  it("should emit LogError on withdraw failure when we put a wrong asset", async function () {
+    const depositAmount = ethers.parseUnits("2000", decimalsDai);
+    const amountToWithdraw = ethers.parseUnits("1000", decimalsDai);
+
+    // Approve the AaveWrite contract to spend DAI
+    await dai.approve(aaveWrite.target, depositAmount);
     // Perform the deposit
-    await aaveWrite.deposit(linkAddress, depositAmount);
-
-    // Check the LINK balance before withdraw
-    const balanceBefore = await link.balanceOf(deployer.address);
-
-    const aTokenBalanceBefore = await aTokenLink.balanceOf(deployer.address);
-
+    await aaveWrite.deposit(daiAddress, depositAmount);
     // Approve the AaveWrite contract to spend aTokens
-    await aTokenLink.approve(aaveWrite.target, withdrawAmount);
-
-    // Perform the withdraw
-    const tx = await aaveWrite.withdraw(linkAddress, aTokenLinkAddress, withdrawAmount);
+    await aTokenDai.approve(aaveWrite.target, amountToWithdraw);
+    // Occurs errors with wrong asset
+    const tx = await aaveWrite.withdraw(linkAddress, aTokenDaiAddress, amountToWithdraw);
     await tx.wait();
 
-    // Check the LINK balance after withdraw
-    const balanceAfter = await link.balanceOf(deployer.address);
+    await expect(tx)
+      .to.emit(aaveWrite, 'LogError')
+       .withArgs("32");
+  });
 
-    expect(balanceAfter).to.be.gt(balanceBefore);
+  it("should emit LogError with low-level data on putting wrong address of assets: atoken, debt, variable", async function () {
+    const depositAmount = ethers.parseUnits("2000", decimalsDai);
+    const amountToWithdraw = ethers.parseUnits("1000", decimalsDai);
 
-    // Check the aToken balance after withdraw
-    const aTokenBalanceAfter = await aTokenLink.balanceOf(deployer.address);
-
-    expect(aTokenBalanceBefore).to.be.gt(aTokenBalanceAfter);
-
-    const checkWithdrawned = balanceAfter - balanceBefore
+    // Approve the AaveWrite contract to spend DAI
+    await dai.approve(aaveWrite.target, depositAmount);
+    // Perform the deposit
+    await aaveWrite.deposit(daiAddress, depositAmount);
+    // Approve the AaveWrite contract to spend aTokens
+    await aTokenDai.approve(aaveWrite.target, amountToWithdraw);
+    // Occurs errors with wrong asset
+    const tx = await aaveWrite.withdraw(debtTokenDaiAddress, aTokenDaiAddress, amountToWithdraw);
+    await tx.wait();
 
     await expect(tx)
-      .to.emit(aaveWrite, 'Withdraw')
-      .withArgs(deployer.address, linkAddress, withdrawAmount, balanceBefore, balanceAfter, checkWithdrawned);
+      .to.emit(aaveWrite, 'LogError')
+       .withArgs("Withdraw failed with low-level data")
   });
- 
 });
