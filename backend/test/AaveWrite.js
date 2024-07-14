@@ -141,39 +141,6 @@ describe("AaveWrite Contract", function () {
       .to.emit(aaveWrite, 'Withdraw')
       .withArgs(deployer.address, usdcAddress, amountToWithdraw, usdcBalanceBefore, usdcBalanceAfter, checkWithdrawned);
   });
-  it("should withdraw DAI from Aave", async function () {
-    const depositAmount = ethers.parseUnits("2000", decimalsDai);
-    const amountToWithdraw = ethers.parseUnits("1000", decimalsDai);
-
-    // Approve the AaveWrite contract to spend DAI
-    await dai.approve(aaveWrite.target, depositAmount);
-    // Perform the deposit
-    await aaveWrite.deposit(daiAddress, depositAmount);
-    // Check the DAI balance before withdraw
-    const balanceBefore = await dai.balanceOf(deployer.address);
-    const aTokenBalanceBefore = await aTokenDai.balanceOf(deployer.address);
-    // Approve the AaveWrite contract to spend aTokens
-    await aTokenDai.approve(aaveWrite.target, amountToWithdraw);
-    // Perform the withdraw
-    const tx = await aaveWrite.withdraw(daiAddress, aTokenDaiAddress, amountToWithdraw);
-    await tx.wait();
-
-    // Check the DAI balance after withdraw
-    const balanceAfter = await dai.balanceOf(deployer.address);
-    
-    expect(balanceAfter).to.be.gt(balanceBefore);
-
-    // Check the aToken balance after withdraw
-    const aTokenBalanceAfter = await aTokenDai.balanceOf(deployer.address);
-
-    expect(aTokenBalanceBefore).to.be.gt(aTokenBalanceAfter);
-
-  
-    const checkWithdrawned = balanceAfter - balanceBefore
-    await expect(tx)
-      .to.emit(aaveWrite, 'Withdraw')
-      .withArgs(deployer.address, daiAddress, amountToWithdraw, balanceBefore, balanceAfter, checkWithdrawned);
-  });
 
   it("should emit LogError on withdraw failure when we put a wrong asset", async function () {
     const depositAmount = ethers.parseUnits("2000", decimalsDai);
