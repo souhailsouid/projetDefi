@@ -8,20 +8,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
-import { Checkbox } from '@/components/ui/checkbox';
-
 import { getLatestPrice } from '@/hooks/getLatestPrice';
 import Image from 'next/image';
 
-import { useGetVariableDebtTokenDataAndBalance } from '@/hooks/useGetVariableDebtTokenDataAndBalance';
-
-const DebtBalances = ({ assetSelected, setBalanceBorrowed }) => {
+import { useGetATokenDataAndBalance } from '@/hooks/useGetATokenDataAndBalance';
+export function LendingAssets() {
   const { getTheLatestPrice } = getLatestPrice();
 
-  const { getVariableDebtTokenDataAndBalance } =
-    useGetVariableDebtTokenDataAndBalance();
- 
+  const { getATokenDataAndBalance } = useGetATokenDataAndBalance();
+
   const showValueInUsdc = (token) => {
     const latestPriceEntry = getTheLatestPrice?.find(
       (priceEntry) => priceEntry.symbol === token.symbol
@@ -37,28 +32,8 @@ const DebtBalances = ({ assetSelected, setBalanceBorrowed }) => {
     return 'Fetching...';
   };
 
-  const borrowedSection = getVariableDebtTokenDataAndBalance?.filter(
-    (token) => token.balance > 0
-  );
-  const shows =
-    assetSelected === 'ALL POSITIONS'
-      ? borrowedSection
-      : getVariableDebtTokenDataAndBalance?.filter(
-          (token) => token.symbol === assetSelected
-        );
 
-  setBalanceBorrowed(
-    borrowedSection?.reduce((acc, token) => {
-      const latestPriceEntry = getTheLatestPrice?.find(
-        (priceEntry) => priceEntry.symbol === token.symbol
-      );
-      if (latestPriceEntry) {
-        const price = token.balance * latestPriceEntry?.price;
-        return acc + price;
-      }
-      return acc;
-    }, 0)
-  );
+
   return (
     <div
       style={{
@@ -71,13 +46,12 @@ const DebtBalances = ({ assetSelected, setBalanceBorrowed }) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[40px]"></TableHead>
               <TableHead className="w-[120px]">Positions</TableHead>
               <TableHead className="w-[120px]">Actions</TableHead>
               <TableHead className="text-right w-[120px]">Token</TableHead>
-              <TableHead className="text-center">Debt</TableHead>
-              <TableHead className=""> </TableHead>
-              <TableHead className="text-center">APR </TableHead>
+              <TableHead className="text-center">Value</TableHead>
+              <TableHead className="text-right"></TableHead>
+              <TableHead className="w-[40px]">APR</TableHead>
             </TableRow>
           </TableHeader>
         </Table>
@@ -85,14 +59,11 @@ const DebtBalances = ({ assetSelected, setBalanceBorrowed }) => {
       <div className="h-[330px] overflow-y-auto">
         <Table>
           <TableBody>
-            {shows?.map((token, index) => {
+            {getATokenDataAndBalance?.map((token, index) => {
               return (
                 <TableRow key={index}>
-                  <TableCell className="font-medium">
-                    <Checkbox id={`terms-${index}`} />
-                  </TableCell>
                   <TableCell> Aave</TableCell>
-                  <TableCell>Borrow</TableCell>
+                  <TableCell>Lending</TableCell>
                   <TableCell
                     className="w-[120px] text-right"
                     style={{
@@ -109,13 +80,15 @@ const DebtBalances = ({ assetSelected, setBalanceBorrowed }) => {
                     />
                   </TableCell>
                   <TableCell className="text-center">
-                    {token.balance} {token.symbol} /
+                    {token.balance}
+                    {''}
+                    {token.symbol} 
                     <br />
                     {showValueInUsdc(token)}
                   </TableCell>
 
                   <TableCell className="text-right">
-                    {token?.borrowApr} %
+                    {token?.borrowApr}
                   </TableCell>
                 </TableRow>
               );
@@ -125,6 +98,4 @@ const DebtBalances = ({ assetSelected, setBalanceBorrowed }) => {
       </div>
     </div>
   );
-};
-
-export default DebtBalances;
+}

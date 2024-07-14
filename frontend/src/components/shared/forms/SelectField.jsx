@@ -18,10 +18,9 @@ export function SelectField({ placeholder }) {
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Actions</SelectLabel>
-          <SelectItem value="borrow">Borrow</SelectItem>
-          <SelectItem value="lending">Lending</SelectItem>
-          <SelectItem value="withdraw">Withdraw</SelectItem>
+          <SelectLabel>Protocol</SelectLabel>
+          <SelectItem value="borrow" disabled>Coumpound</SelectItem>
+          <SelectItem value="lending" disabled>Uniswap</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>

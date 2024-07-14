@@ -14,7 +14,6 @@ const  SelectContentFromAction = ({ placeholder, setActionContent })  => {
   const items = [
     { value: "borrow", label: "Borrow" },
     { value: "lending", label: "Lending" },
-    { value: "withdraw", label: "Withdraw" },
   ];
 
   const [selected, setSelected] = React.useState(items[0].value);
@@ -29,8 +28,6 @@ const  SelectContentFromAction = ({ placeholder, setActionContent })  => {
         return setActionContent('Borrow')
       case "lending":
         return setActionContent('Lending')
-      case "withdraw":
-        return setActionContent('Withdraw')
       default:
         return null;
     }

@@ -16,16 +16,17 @@ import {
 } from '@/components/ui/drawer';
 import { ResponsiveContainer } from 'recharts';
 import { Input } from '@/components/ui/input';
-import { useWriteContract, useEstimateFeesPerGas, useWatchContractEvent } from 'wagmi';
+import { useWriteContract, useEstimateFeesPerGas } from 'wagmi';
 import { contractWriteAbi, contractWriteAddress } from '@/constants';
 import { useGetATokenBalances } from '@/hooks/useGetATokenBalances';
-import { formatUnitsToFixed } from '@/utils/format';
+
 import { config } from '@/app/customRainbowKitProvider';
-import { SelectWithdrawsAsset } from '@/components/shared/forms/SelectAsset';
+import { SelectRepaysAsset } from '@/components/shared/forms/SelectAsset';
 import { getLatestPrice } from '@/hooks/getLatestPrice';
 import { useGetWalletBalance } from '@/hooks/useGetBalance';
 import { Loader2 } from 'lucide-react';
 import ContractEvents from '@/components/shared/forms/eventsListener/withdraw.js';
+import { useGetVariableDebtTokenDataAndBalance } from '@/hooks/useGetVariableDebtTokenDataAndBalance';
 const abi = [
   {
     type: 'function',
@@ -50,7 +51,7 @@ const abi = [
   },
 ];
 
-export function WithdrawButton() {
+export function RepayButton() {
   const [tokenNumber, setTokenNumber] = useState(null);
   const [assetSelected, setAssetSelected] = useState(null);
   const result = useEstimateFeesPerGas({
@@ -64,15 +65,24 @@ export function WithdrawButton() {
     getLatestPrice();
   const { suppliedList, errorGetATokenBalances, isAtokenBalanceLoading } =
     useGetATokenBalances();
+    const { getVariableDebtTokenDataAndBalance } =
+    useGetVariableDebtTokenDataAndBalance();
+    const borrowedSection = getVariableDebtTokenDataAndBalance?.filter(
+      (token) => token.balance > 0
+    );
+  
+  console.log('borrowedSection', borrowedSection);
+  console.log('assetSelected', assetSelected);
+  console.log("suppliedList", suppliedList);
   const { walletBalanceData, isUserWalletBalanceLoading } =
     useGetWalletBalance();
-  const showList = suppliedList?.filter(
-    (asset) => asset.symbol === assetSelected
+  const showList = borrowedSection?.filter(
+    (asset) => asset.symbol === assetSelected?.split("aEth")[1]   //aeth ply
   );
-  const symbol = showList && showList[0]?.symbol?.split('aEth')[1]; // aEthUSDC => USDC
+  const symbol = showList && showList[0]?.symbol; // aEthUSDC => USDC
 
-  const indexAtoken = suppliedList?.find(
-    (asset) => asset.symbol.split('aEth')[1] === symbol
+  const indexAtoken = borrowedSection?.find(
+    (asset) => asset.symbol === symbol
   );
 
   const aTokenAddress = indexAtoken?.tokenAddress;
@@ -80,6 +90,8 @@ export function WithdrawButton() {
   const selectIndex =
     !isUserWalletBalanceLoading &&
     walletBalanceData[0].find((token) => token.symbol === symbol);
+  
+  
   const addressSupply = selectIndex && selectIndex.tokenAddress;
 
   const { writeContract, isPending } = useWriteContract({
@@ -103,7 +115,7 @@ export function WithdrawButton() {
       try {
           const tx = await writeContract({
             abi,
-            address: aTokenAddress, // aToken address
+            address: "0xf8Fb3713D459D7C1018BD0A49D19b4C44290EBE5", // aToken address
             functionName: 'approve',
             args: [
               contractWriteAddress,
@@ -141,11 +153,12 @@ export function WithdrawButton() {
       await writeContract({
         address: contractWriteAddress, // Your contract address
         abi: contractWriteAbi,
-        functionName: 'withdraw',
+        functionName: 'borrow',
         args: [
-          addressSupply, // Address of token to withdraw
-          aTokenAddress, // aToken address
-          amountToWithdraw,
+          "0xf8Fb3713D459D7C1018BD0A49D19b4C44290EBE5", // Address of token to withdraw
+          amountToWithdraw, 
+          2
+          ,
         ],
       });
       // rajouter un evenement pour le withdraw
@@ -166,13 +179,10 @@ export function WithdrawButton() {
 
   }, [isApproved, isApproving, setIsApproved, setIsApproving ]);
   const balanceMaxInAsset =
-    suppliedList &&
+    borrowedSection &&
     assetSelected &&
-    formatUnitsToFixed(
-      showList[0]?.value?.toString(),
-      showList[0]?.decimals,
-      2
-    );
+    showList[0]?.balance?.toString();
+     
 
   const symbolAsset = assetSelected?.split('aEth')[1];
 
@@ -196,26 +206,26 @@ export function WithdrawButton() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="outline">Withdraw</Button>
+        <Button variant="outline">Repay</Button>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
             <DrawerTitle>{symbolAsset}</DrawerTitle>
-            <DrawerDescription>Withdraw.</DrawerDescription>
+            <DrawerDescription>Repay...</DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-0">
             <div className="flex items-center justify-center space-x-2">
-              <SelectWithdrawsAsset
+              <SelectRepaysAsset
                 className="w-full"
                 placeholder="Token"
                 setAssetSelected={setAssetSelected}
-                tokenToSupply={suppliedList}
+                tokenToSupply={borrowedSection}
               />
             </div>
             <div className="p-4 pb-0 mb-4">
               <DrawerDescription>
-                Set the amount you desire to withdraw.
+                Set the amount you desire to repay.
               </DrawerDescription>
             </div>
             <div className="flex items-center justify-center space-x-2">
@@ -229,7 +239,7 @@ export function WithdrawButton() {
             <div className="flex items-center justify-right space-x-2 flex-wrap mt-3">
               <div className="w-full">
                 <DrawerDescription>
-                  Max Widthdraw as {symbolAsset} : {balanceMaxInAsset}{' '}
+                  Max Repay as {symbolAsset} : {balanceMaxInAsset}{' '}
                   {symbolAsset}
                 </DrawerDescription>
                 <DrawerDescription>
@@ -276,7 +286,7 @@ export function WithdrawButton() {
               onClick={handleWithdraw}
        
             >
-              Withdraw {symbolAsset || ''}
+              Repay {symbolAsset || ''}
             </Button>
             <DrawerClose asChild>
               <Button variant="outline">Cancel</Button>

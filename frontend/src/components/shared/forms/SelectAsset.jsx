@@ -15,13 +15,7 @@ const SelectAsset = ({ placeholder, setAssetSelected, width }) => {
     tokenToSupply,
   } = useGetWalletBalance();
 
-
-  const items = [
-    { value: 'borrow', label: 'Borrow' },
-    { value: 'lending', label: 'Lending' },
-    { value: 'withdraw', label: 'Withdraw' },
-  ];
-
+console.log('tokenToSupply', tokenToSupply)
   const handleSelect = (value) => {
     setAssetSelected(value);
   };
@@ -36,7 +30,7 @@ const dynamiqueClass = width ? width:  'w-full'
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Token</SelectLabel>
-            {tokenToSupply && [...tokenToSupply, { symbol: 'ALL TOKENS' }]?.map((item) => (
+            {tokenToSupply && [...tokenToSupply, { symbol: 'ALL POSITIONS' }]?.map((item) => (
               <SelectItem key={item.symbol} value={item.symbol}>
                 {item.symbol}
               </SelectItem>
@@ -113,3 +107,32 @@ const dynamiqueClass = width ? width:  'w-full'
 };
 
 
+
+export function SelectRepaysAsset ({ placeholder, setAssetSelected, width, tokenToSupply }) {
+
+  const handleSelect = (value) => {
+    setAssetSelected(value);
+  };
+
+const dynamiqueClass = width ? width:  'w-full' 
+  return (
+    <div className={dynamiqueClass}>
+      <Select onValueChange={handleSelect}>
+        <SelectTrigger className="">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Token</SelectLabel>
+            {tokenToSupply && tokenToSupply?.map((item) => (
+              <SelectItem key={item.symbol} value={item.symbol}>
+                {item.symbol}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+     
+    </div>
+  );
+};

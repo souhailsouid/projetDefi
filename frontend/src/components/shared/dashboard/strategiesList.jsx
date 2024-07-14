@@ -1,17 +1,12 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useGetATokenBalances } from "@/hooks/useGetATokenBalances";
-
 
 
 const StrategiesList = ({
   strategies,
   onSelect,
 }) => {
-  const {  useATokenBalances,
-    errorGetATokenBalances,
-    isLoading } = useGetATokenBalances();
   
   return (
     <Card className="p-4 bg-white rounded-lg border-none shadow-none">

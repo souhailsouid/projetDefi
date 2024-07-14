@@ -8,126 +8,52 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Bell } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useGetATokenBalances } from '@/hooks/useGetATokenBalances';
-import { formatUnitsToFixed } from '@/utils/format';
-
 import { getLatestPrice } from '@/hooks/getLatestPrice';
 import Image from 'next/image';
 
-const strategiesData = {
-  strategie1: [
-    {
-      position: 'AAVE',
-      totalAmount: '$250.00',
-      action: 'Borrow',
-      currency: 'USDC',
-      token: '200',
-      apr: '12%',
-    },
-    {
-      position: 'MORPHO',
-      totalAmount: '$150.00',
-      action: 'Supply',
-      currency: 'USDC',
-      token: '800',
-      apr: '12%',
-    },
-    {
-      position: 'MORPHO',
-      totalAmount: '$150.00',
-      action: 'Supply',
-      currency: 'USDC',
-      token: '800',
-      apr: '12%',
-    },
-    {
-      position: 'MORPHO',
-      totalAmount: '$150.00',
-      action: 'Supply',
-      currency: 'USDC',
-      token: '800',
-      apr: '12%',
-    },
-    {
-      position: 'MORPHO',
-      totalAmount: '$150.00',
-      action: 'Supply',
-      currency: 'USDC',
-      token: '800',
-      apr: '12%',
-    },
-    {
-      position: 'MORPHO',
-      totalAmount: '$150.00',
-      action: 'Supply',
-      currency: 'USDC',
-      token: '800',
-      apr: '12%',
-    },
-    {
-      position: 'MORPHO',
-      totalAmount: '$150.00',
-      action: 'Supply',
-      currency: 'USDC',
-      token: '800',
-      apr: '12%',
-    },
-    // Add more data as needed
-  ],
-  strategie2: [
-    {
-      position: 'POLYGON',
-      totalAmount: '$350.00',
-      action: 'Supply',
-      currency: 'USDC',
-      token: '1000',
-      apr: '12%',
-    },
-    {
-      position: 'ARBITRUM',
-      totalAmount: '$450.00',
-      action: 'Borrow',
-      currency: 'USDC',
-      token: '220',
-      apr: '12%',
-    },
-    // Add more data as needed
-  ],
-  // Define other strategies data
-};
+import { useGetATokenDataAndBalance } from '@/hooks/useGetATokenDataAndBalance';
+export function LendingList({ assetSelected,setBalanceSupplied }) {
+  const { getTheLatestPrice } = getLatestPrice();
 
-export function LendingList({ assetSelected }) {
-  const { suppliedList, errorGetATokenBalances, isAtokenBalanceLoading } =
-    useGetATokenBalances();
-  const { getTheLatestPrice, errorGetLatestPrice, isPriceLoading } =
-    getLatestPrice();
+  const { getATokenDataAndBalance } = useGetATokenDataAndBalance();
 
   const showValueInUsdc = (token) => {
     const latestPriceEntry = getTheLatestPrice?.find(
-      (priceEntry) => priceEntry.symbol === token.symbol?.split('aEth')[1]
+      (priceEntry) => priceEntry.symbol === token.symbol
     );
-    const assetInUsdc = formatUnitsToFixed(
-      token.value.toString(),
-      token?.decimals,
-      2
-    );
-
-    const priceInUsdc = assetInUsdc * latestPriceEntry.price;
-
+    if (token.balance == 0) {
+      return '0 $';
+    }
     if (latestPriceEntry) {
-      return `${latestPriceEntry.price} $ / ${priceInUsdc?.toFixed(2)?.toString()} $ `;
+      const price = token.balance * latestPriceEntry?.price;
+      return `${latestPriceEntry?.price} $ / ${price.toFixed(2)} $`;
     }
 
     return 'Fetching...';
   };
 
+  const assetDeposited = getATokenDataAndBalance?.filter((token) => {
+    return token.balance > 0;
+  });
   const showList =
-    assetSelected === 'ALL TOKENS'
-      ? suppliedList
-      : suppliedList?.filter(
-          (token) => token.symbol.split('aEth')[1] === assetSelected
+    assetSelected === 'ALL POSITIONS'
+      ? assetDeposited
+      : getATokenDataAndBalance?.filter(
+          (token) => token.symbol === assetSelected
+        );
+
+        setBalanceSupplied(
+          assetDeposited?.reduce((acc, token) => {
+            const latestPriceEntry = getTheLatestPrice?.find(
+              (priceEntry) => priceEntry.symbol === token.symbol
+            );
+            if (latestPriceEntry) {
+              const price = token.balance * latestPriceEntry?.price;
+              return acc + price;
+            }
+            return acc;
+          }, 0)
         );
   return (
     <div
@@ -142,14 +68,12 @@ export function LendingList({ assetSelected }) {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[40px]"></TableHead>
-              <TableHead className="w-[120px]">Positions</TableHead>
-              <TableHead className="w-[120px]">Actions</TableHead>
-              <TableHead className="text-right w-[120px]">Token</TableHead>
+              <TableHead className="w-[200px]">Positions</TableHead>
+              <TableHead className="w-[200px]">Actions</TableHead>
+              <TableHead className="text-right w-[200px]">Token</TableHead>
               <TableHead className="text-center">Value</TableHead>
               <TableHead className="text-right"></TableHead>
-              <TableHead className="w-[40px]">
-                <Bell fill="" />
-              </TableHead>
+              <TableHead className="w-[40px]">APR</TableHead>
             </TableRow>
           </TableHeader>
         </Table>
@@ -174,30 +98,23 @@ export function LendingList({ assetSelected }) {
                     }}
                   >
                     <Image
-                      src={`${token.symbol.split('aEth')[1]}.svg`}
+                      src={`${token.symbol}.svg`}
                       width={30}
                       height={30}
                       alt={`Logo of ${token.symbol}`}
                     />
                   </TableCell>
                   <TableCell className="text-center">
-                    {formatUnitsToFixed(
-                      token.value.toString(),
-                      token.decimals,
-                      2
-                    )}{' '}
-                    {token.symbol.split('aEth')[1]} /
+                    {token.balance}
+                    {''}
+                    {token.symbol} /
                     <br />
                     {showValueInUsdc(token)}
                   </TableCell>
 
                   <TableCell className="text-right">
-                    <select className="border border-gray-300 rounded px-2 py-1">
-                      <option value="APR">APR</option>
-                      <option value="CR">CR</option>
-                    </select>
+                    {token?.borrowApr} %
                   </TableCell>
-                  <TableCell className="text-right">12%</TableCell>
                 </TableRow>
               );
             })}

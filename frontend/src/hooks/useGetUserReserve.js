@@ -1,10 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  useAccount,
-  useReadContract,
-  useWatchContractEvent,
-  useReadContracts,
-} from 'wagmi';
+import { useAccount, useReadContracts } from 'wagmi';
 import { contractAddress, contractAbi } from '@/constants';
 import { useGetReserveList } from '@/hooks/useGetReserveList';
 export const useGetUserReserve = () => {
@@ -13,12 +8,7 @@ export const useGetUserReserve = () => {
   const [userReserveData, setUserReserveData] = useState(null);
   const { address } = useAccount();
 
-  const { reserveListData, errorGetReserveList } = useGetReserveList();
-  const arr = [
-    '0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357',
-    '0xf8Fb3713D459D7C1018BD0A49D19b4C44290EBE5',
-  ];
-
+  const { reserveListData } = useGetReserveList();
 
   const contractCalls = reserveListData?.map((asset) => ({
     address: contractAddress,

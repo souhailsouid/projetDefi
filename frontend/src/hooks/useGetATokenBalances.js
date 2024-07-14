@@ -2,11 +2,9 @@ import { useEffect, useState } from 'react';
 import {
   useAccount,
   useReadContract,
-  useWatchContractEvent,
-  useReadContracts,
 } from 'wagmi';
 import { contractAddress, contractAbi } from '@/constants';
-import { useGetReserveList } from '@/hooks/useGetReserveList';
+
 export const useGetATokenBalances = () => {
   const [isAtokenBalanceLoading, setIsLoading] = useState(true);
   const [errorGetATokenBalances, setError] = useState(null);

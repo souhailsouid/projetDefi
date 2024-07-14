@@ -2,12 +2,48 @@ import React from 'react';
 import { SelectField } from '@/components/shared/forms/SelectField';
 import SelectContentFromAction from '@/components/shared/forms/SelectContentFromAction';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
 import SelectAsset from '@/components/shared/forms/SelectAsset';
 import { SupplyButton } from '@/components/shared/forms/SupplyButton';
 import { WithdrawButton } from '@/components/shared/forms/withdraw';
-const ActionPanel = ({ setActionContent, setAssetSelected }) => {
-  const [minted, setMinted] = React.useState(false);
+import { RepayButton } from '@/components/shared/forms/repayButton';
+import { useGetVariableDebtTokenDataAndBalance } from '@/hooks/useGetVariableDebtTokenDataAndBalance';
+import { DialogAssets } from '@/components/shared/dashboard/globalMonitoring/dialogAssets';
+import { useGetATokenDataAndBalance } from '@/hooks/useGetATokenDataAndBalance';
+const ActionPanel = ({
+  setActionContent,
+  setAssetSelected,
+  balanceBorrowed,
+  balanceSupplied,
+  actionContent,
+}) => {
+  const { getVariableDebtTokenDataAndBalance } =
+    useGetVariableDebtTokenDataAndBalance();
+
+  const { getATokenDataAndBalance } = useGetATokenDataAndBalance();
+  const suppliedSection = getATokenDataAndBalance?.filter(
+    (token) => token.balance > 0
+  );
+  const borrowedSection = getVariableDebtTokenDataAndBalance?.filter(
+    (token) => token.balance > 0
+  );
+  const calculateAverageAPR = (positions) => {
+    let totalWeightedApr = 0;
+    let totalBalance = 0;
+
+    positions?.forEach((position) => {
+      const balance = parseFloat(position.balance);
+      const borrowApr = parseFloat(position.borrowApr);
+
+      totalWeightedApr += balance * borrowApr;
+      totalBalance += balance;
+    });
+
+    if (totalBalance === 0) {
+      return 0;
+    }
+
+    return totalWeightedApr / totalBalance;
+  };
   return (
     <div>
       <div className="flex flex-wrap space-x-4 p-4 bg-white border-t border-gray-300">
@@ -16,34 +52,29 @@ const ActionPanel = ({ setActionContent, setAssetSelected }) => {
           placeholder="Actions"
           setActionContent={setActionContent}
         />
-        <SelectAsset placeholder="Token" setAssetSelected={setAssetSelected} width="w-[180px]"  />
-      
-       
+        <SelectAsset
+          placeholder="Token"
+          setAssetSelected={setAssetSelected}
+          width="w-[180px]"
+        />
+        <RepayButton />
         <SupplyButton />
-        <WithdrawButton/>
-   
-
+        <WithdrawButton />
       </div>
+
       <div className="flex flex-wrap space-x-4 p-4 bg-white border-t border-gray-300">
-        <Button
-          className="bg-blue-500 text-white rounded px-4 py-2 w-100"
-          onClick={() => setMinted(true)}
-        >
-          {minted && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Mint NFT
-        </Button>
-        <button className="border border-gray-300 rounded px-4 py-2">
-          Global monitoring
-        </button>
-        <button className="border border-gray-300 rounded px-4 py-2">
-          Total value = 120 $
-        </button>
-        <button className="border border-gray-300 rounded px-4 py-2">
-          APR = + 10 %
-        </button>
-        <button className="border border-gray-300 rounded px-4 py-2">
-          Yield = 12 $
-        </button>
+        <DialogAssets actionContent={actionContent} />
+        <div className="border border-gray-300 rounded px-4 py-2">
+          Total value ={' '}
+          {actionContent === 'Borrow' ? balanceBorrowed : balanceSupplied} $
+        </div>
+        <div className="border border-gray-300 rounded px-4 py-2">
+          Borrow APR = +{' '}
+          {actionContent === 'Borrow'
+            ? borrowedSection && calculateAverageAPR(borrowedSection).toFixed(2)
+            : calculateAverageAPR(suppliedSection).toFixed(2)}{' '}
+          %
+        </div>
       </div>
     </div>
   );

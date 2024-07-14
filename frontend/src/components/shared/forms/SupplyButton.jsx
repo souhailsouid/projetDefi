@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { ethers } from 'ethers';
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,11 @@ import {
 } from '@/components/ui/drawer';
 import { ResponsiveContainer } from 'recharts';
 import { Input } from '@/components/ui/input';
-import { useWriteContract, useEstimateFeesPerGas } from 'wagmi';
+import {
+  useWriteContract,
+  useEstimateFeesPerGas,
+  useWaitForTransactionReceipt,
+} from 'wagmi';
 import { contractWriteAbi, contractWriteAddress } from '@/constants';
 import { toast } from 'react-toastify';
 import { useGetATokenBalances } from '@/hooks/useGetATokenBalances';
@@ -23,6 +28,7 @@ import { config } from '@/app/customRainbowKitProvider';
 import { SelectDepositAsset } from '@/components/shared/forms/SelectAsset';
 import { getLatestPrice } from '@/hooks/getLatestPrice';
 import { useGetWalletBalance } from '@/hooks/useGetBalance';
+import { Loader2 } from 'lucide-react';
 const abi = [
   {
     type: 'function',
@@ -50,36 +56,42 @@ const abi = [
 export function SupplyButton() {
   const [tokenNumber, setTokenNumber] = React.useState(null);
   const [assetSelected, setAssetSelected] = React.useState(null);
+  const [statusOfTransaction, setStatusTransaction] = React.useState('');
+  const [statusApproval, setStatusApproval] = React.useState('');
   const result = useEstimateFeesPerGas({
     config,
   });
 
   const { getTheLatestPrice } = getLatestPrice();
-  console.log('getTheLatestPrice', getTheLatestPrice)
+  console.log('getTheLatestPrice', getTheLatestPrice);
   const { walletBalanceData, isUserWalletBalanceLoading } =
     useGetWalletBalance();
   console.log('walletBalanceData', walletBalanceData);
-  ;
   // link: decimal 8
   // eth : deciam 8
-  console.log('conversion', ethers.formatUnits("99978134", 8))
-const selectIndex =
-!isUserWalletBalanceLoading &&
-walletBalanceData[0]?.findIndex((token) => token?.symbol === assetSelected);
+  console.log('conversion', ethers.formatUnits('99978134', 8));
+  const selectIndex =
+    !isUserWalletBalanceLoading &&
+    walletBalanceData[0]?.findIndex((token) => token?.symbol === assetSelected);
 
-  console.log('selcted', selectIndex)
+  console.log('selcted', selectIndex);
   const selectToken =
     !isUserWalletBalanceLoading &&
     walletBalanceData[0]?.find((token) => token?.symbol === assetSelected);
-  
-   console.log('selcted', selectToken)
+
+  console.log('selcted', selectToken);
   const addressSupply = selectToken && selectToken.tokenAddress;
   const decimalsToken = selectToken && selectToken.decimals;
   const supplyList =
     !isUserWalletBalanceLoading &&
     walletBalanceData[0]?.map((asset) => asset.symbol);
 
-  const { writeContract, isPending } = useWriteContract({
+  const {
+    data: hash,
+    error,
+    isPending: setIsPending,
+    writeContract,
+  } = useWriteContract({
     mutation: {
       onSuccess: () => {
         toast.success('Transaction successful');
@@ -91,9 +103,19 @@ walletBalanceData[0]?.findIndex((token) => token?.symbol === assetSelected);
     },
   });
 
-  const handleDeposit = async () => {
+  const {
+    isLoading: isConfirming,
+    isSuccess,
+    error: errorConfirmation,
+  } = useWaitForTransactionReceipt({ hash });
+  console.log('isConfirming', isConfirming, isConfirming, isSuccess, hash);
+  // alert('isConfirming', isConfirming, isSuccess, hash);
+
+  console.log('isSuccess', isSuccess);
+
+  const handleApprove = async () => {
     if (tokenNumber !== null && assetSelected) {
-      // Approve aTokens to be spent by the contract
+      setStatusTransaction('Approving');
       await writeContract({
         abi,
         address: addressSupply, // Address of token to supply
@@ -103,7 +125,22 @@ walletBalanceData[0]?.findIndex((token) => token?.symbol === assetSelected);
           ethers.parseUnits(tokenNumber.toString(), decimalsToken),
         ],
       });
+    }
+  };
 
+  const handleDeposit = async () => {
+    if (tokenNumber !== null && assetSelected) {
+      // Approve aTokens to be spent by the contract
+      // await writeContract({
+      //   abi,
+      //   address: addressSupply, // Address of token to supply
+      //   functionName: 'approve',
+      //   args: [
+      //     contractWriteAddress,
+      //     ethers.parseUnits(tokenNumber.toString(), decimalsToken),
+      //   ],
+      // });
+      setStatusTransaction('Supplying');
       const amountToWithdraw = ethers.parseUnits(
         tokenNumber.toString(),
         decimalsToken
@@ -121,7 +158,7 @@ walletBalanceData[0]?.findIndex((token) => token?.symbol === assetSelected);
       });
     }
   };
-console.log('assetSelected', assetSelected)
+  console.log('assetSelected', assetSelected);
   // const balanceMaxInAsset =
   //   assetSelected && !isUserWalletBalanceLoading &&
   //   formatUnitsToFixed(
@@ -130,9 +167,8 @@ console.log('assetSelected', assetSelected)
   //     2
   //   );
 
-
-// console.log('bal',  !isUserWalletBalanceLoading && walletBalanceData[1][selectIndex]?.toString(),
-// selectToken?.decimals, balanceMaxInAsset)
+  // console.log('bal',  !isUserWalletBalanceLoading && walletBalanceData[1][selectIndex]?.toString(),
+  // selectToken?.decimals, balanceMaxInAsset)
   // const showValueInUsdc = () => {
 
   //     // if (['USDC', 'USDT', 'DAI'].includes(assetSelected)) {
@@ -142,7 +178,7 @@ console.log('assetSelected', assetSelected)
   //     const latestPriceEntry = getTheLatestPrice?.find(
   //       (priceEntry) => priceEntry.symbol === assetSelected
   //     );
-      
+
   //   console.log('latestPriceEntry', latestPriceEntry)
   //     if (latestPriceEntry) {
   //       return `${formatUnitsToFixed(latestPriceEntry.price.toString(), 8, 2)} $`;
@@ -153,21 +189,46 @@ console.log('assetSelected', assetSelected)
     const latestPriceEntry = getTheLatestPrice?.find(
       (priceEntry) => priceEntry.symbol === assetSelected
     );
-    console.log('latestpirceEntry', latestPriceEntry)
-    const assetInUsdc = assetSelected && !isUserWalletBalanceLoading && formatUnitsToFixed(
-      walletBalanceData[1][selectIndex]?.toString(),
-      selectToken?.decimals,
-      2
-    );
+    console.log('latestpirceEntry', latestPriceEntry);
+    const assetInUsdc =
+      assetSelected &&
+      !isUserWalletBalanceLoading &&
+      formatUnitsToFixed(
+        walletBalanceData[1][selectIndex]?.toString(),
+        selectToken?.decimals,
+        2
+      );
 
-    const priceInUsdc = latestPriceEntry && assetInUsdc * latestPriceEntry.price;
+    const priceInUsdc =
+      latestPriceEntry && assetInUsdc * latestPriceEntry.price;
 
     if (latestPriceEntry) {
-      return `${latestPriceEntry.price} $ / ${priceInUsdc?.toFixed(2)?.toString()} $ `;
+      return `${priceInUsdc?.toFixed(2)?.toString()} $ `;
     }
 
     return 'Fetching...';
   };
+  const approveBtnDisabled =
+    !assetSelected || !tokenNumber || isConfirming || isSuccess;
+ 
+
+  // const showDepositMessageWithContext = () => {
+  //   if (isSuccess && statusOfTransaction === 'Supplying') {
+  //     setStatusTransaction('');
+  //     setConfirmationStatusApproval('');
+  //     return `Supplied ${assetSelected} with success`;
+  //   }
+
+  //   if (isConfirming && statusOfTransaction === 'Supplying') {
+  //     return (
+  //       <>
+  //         <Loader2 className="mr-2 h-4 w-4 animate-spin" color="#fff" />{' '}
+  //         Withdrawing...
+  //       </>
+  //     );
+  //   }
+  //   return `Supply ${assetSelected || ''}`;
+  // };
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -232,8 +293,16 @@ console.log('assetSelected', assetSelected)
             </div>
           </div>
           <DrawerFooter>
-            <Button onClick={handleDeposit}>
-              Supply {assetSelected} from supplied List
+            <Button onClick={handleApprove}>
+              {/* {showApprovalMessageWithContext()} */}
+              Approve {assetSelected || ''} to continue
+            </Button>
+            <Button
+              onClick={handleDeposit}
+              // disabled={statusApproval !== 'Approve successful'}
+            >
+              Supply {assetSelected || ''}
+              {/* {showDepositMessageWithContext()} */}
             </Button>
             <DrawerClose asChild>
               <Button variant="outline">Cancel</Button>
