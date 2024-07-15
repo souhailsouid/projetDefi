@@ -15,7 +15,7 @@ const SelectAsset = ({ placeholder, setAssetSelected, width }) => {
     tokenToSupply,
   } = useGetWalletBalance();
 
-console.log('tokenToSupply', tokenToSupply)
+
   const handleSelect = (value) => {
     setAssetSelected(value);
   };
@@ -50,7 +50,7 @@ export function SelectWithdrawsAsset ({ placeholder, setAssetSelected, width, to
   const handleSelect = (value) => {
     setAssetSelected(value);
   };
-
+const assetsSupplied = tokenToSupply?.filter((item) => item.balance > 0)
 const dynamiqueClass = width ? width:  'w-full' 
   return (
     <div className={dynamiqueClass}>
@@ -60,10 +60,10 @@ const dynamiqueClass = width ? width:  'w-full'
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>Token</SelectLabel>
-            {tokenToSupply && tokenToSupply?.map((item) => (
+            <SelectLabel>Assets</SelectLabel>
+            {tokenToSupply && assetsSupplied?.map((item) => (
               <SelectItem key={item.symbol} value={item.symbol}>
-                {item.symbol.split("aEth")[1]}
+                {item.symbol}
               </SelectItem>
             ))}
           </SelectGroup>

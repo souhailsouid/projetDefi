@@ -1,774 +1,697 @@
 export const contractAddress = '0xD597A3A5bB7026975359C9f6AB15168E31790d33';
-export const contractViewAddress = '0xfDc15d00849EC5012ce2ADF8d716E1D6acDF04ee';
+export const contractViewAddress = '0xA3DEe336FCdf472F37ac6CA1B6B79CA82e19C110';
 export const ContractViewAbi = [
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: 'address',
-        name: '_addressesProvider',
-        type: 'address',
+        "internalType": "address",
+        "name": "_addressesProvider",
+        "type": "address"
       },
       {
-        internalType: 'address',
-        name: '_dataProvider',
-        type: 'address',
+        "internalType": "address",
+        "name": "_dataProvider",
+        "type": "address"
       },
       {
-        internalType: 'address',
-        name: '_poolAddress',
-        type: 'address',
-      },
+        "internalType": "address",
+        "name": "_poolAddress",
+        "type": "address"
+      }
     ],
-    stateMutability: 'nonpayable',
-    type: 'constructor',
+    "stateMutability": "nonpayable",
+    "type": "constructor"
   },
   {
-    inputs: [],
-    name: 'ReentrancyGuardReentrantCall',
-    type: 'error',
+    "inputs": [],
+    "name": "ReentrancyGuardReentrantCall",
+    "type": "error"
   },
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: true,
-        internalType: 'address',
-        name: 'user',
-        type: 'address',
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
       },
       {
-        indexed: true,
-        internalType: 'address',
-        name: 'asset',
-        type: 'address',
+        "indexed": true,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
       },
       {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
       },
       {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'netAmount',
-        type: 'uint256',
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "balanceBefore",
+        "type": "uint256"
       },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "balanceAfter",
+        "type": "uint256"
+      }
     ],
-    name: 'Borrow',
-    type: 'event',
+    "name": "Deposit",
+    "type": "event"
   },
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: true,
-        internalType: 'address',
-        name: 'user',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'balanceBefore',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'balanceAfter',
-        type: 'uint256',
-      },
+        "indexed": false,
+        "internalType": "string",
+        "name": "reason",
+        "type": "string"
+      }
     ],
-    name: 'Deposit',
-    type: 'event',
+    "name": "LogError",
+    "type": "event"
   },
   {
-    anonymous: false,
-    inputs: [
+    "inputs": [
       {
-        indexed: false,
-        internalType: 'string',
-        name: 'reason',
-        type: 'string',
+        "internalType": "address",
+        "name": "reserve",
+        "type": "address"
       },
+      {
+        "internalType": "address",
+        "name": "wallet",
+        "type": "address"
+      }
     ],
-    name: 'LogError',
-    type: 'event',
-  },
-  {
-    inputs: [
+    "name": "getATokenDataAndBalance",
+    "outputs": [
       {
-        internalType: 'address',
-        name: 'asset',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'interestRateMode',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint16',
-        name: 'referralCode',
-        type: 'uint16',
-      },
-    ],
-    name: 'borrow',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-    ],
-    name: 'deposit',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'reserve',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'wallet',
-        type: 'address',
-      },
-    ],
-    name: 'getATokenDataAndBalance',
-    outputs: [
-      {
-        components: [
+        "components": [
           {
-            internalType: 'string',
-            name: 'symbol',
-            type: 'string',
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
           },
           {
-            internalType: 'address',
-            name: 'tokenAddress',
-            type: 'address',
+            "internalType": "address",
+            "name": "tokenAddress",
+            "type": "address"
           },
           {
-            internalType: 'uint8',
-            name: 'decimals',
-            type: 'uint8',
-          },
+            "internalType": "uint8",
+            "name": "decimals",
+            "type": "uint8"
+          }
         ],
-        internalType: 'struct AaveLendingPoolInteractor.TokenData',
-        name: '',
-        type: 'tuple',
+        "internalType": "struct AaveLendingPoolInteractor.TokenData",
+        "name": "",
+        "type": "tuple"
       },
       {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       },
       {
-        components: [
+        "components": [
           {
-            internalType: 'uint256',
-            name: 'variableBorrowRate',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "variableBorrowRate",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'liquidityRate',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "liquidityRate",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'ltv',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "ltv",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'liquidationThreshold',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "liquidationThreshold",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'reserveFactor',
-            type: 'uint256',
-          },
+            "internalType": "uint256",
+            "name": "reserveFactor",
+            "type": "uint256"
+          }
         ],
-        internalType: 'struct AaveLendingPoolInteractor.AdditionalData',
-        name: '',
-        type: 'tuple',
-      },
+        "internalType": "struct AaveLendingPoolInteractor.AdditionalData",
+        "name": "",
+        "type": "tuple"
+      }
     ],
-    stateMutability: 'view',
-    type: 'function',
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: 'address',
-        name: 'priceFeedAddress',
-        type: 'address',
-      },
+        "internalType": "address",
+        "name": "priceFeedAddress",
+        "type": "address"
+      }
     ],
-    name: 'getLatestPrice',
-    outputs: [
+    "name": "getLatestPrice",
+    "outputs": [
       {
-        internalType: 'int256',
-        name: '',
-        type: 'int256',
-      },
+        "internalType": "int256",
+        "name": "",
+        "type": "int256"
+      }
     ],
-    stateMutability: 'view',
-    type: 'function',
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: 'address',
-        name: 'asset',
-        type: 'address',
-      },
+        "internalType": "address",
+        "name": "asset",
+        "type": "address"
+      }
     ],
-    name: 'getReserveConfigurationData',
-    outputs: [
+    "name": "getReserveConfigurationData",
+    "outputs": [
       {
-        components: [
+        "components": [
           {
-            internalType: 'uint256',
-            name: 'decimals',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "decimals",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'ltv',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "ltv",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'liquidationThreshold',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "liquidationThreshold",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'liquidationBonus',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "liquidationBonus",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'reserveFactor',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "reserveFactor",
+            "type": "uint256"
           },
           {
-            internalType: 'bool',
-            name: 'usageAsCollateralEnabled',
-            type: 'bool',
+            "internalType": "bool",
+            "name": "usageAsCollateralEnabled",
+            "type": "bool"
           },
           {
-            internalType: 'bool',
-            name: 'borrowingEnabled',
-            type: 'bool',
+            "internalType": "bool",
+            "name": "borrowingEnabled",
+            "type": "bool"
           },
           {
-            internalType: 'bool',
-            name: 'stableBorrowRateEnabled',
-            type: 'bool',
+            "internalType": "bool",
+            "name": "stableBorrowRateEnabled",
+            "type": "bool"
           },
           {
-            internalType: 'bool',
-            name: 'isActive',
-            type: 'bool',
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
           },
           {
-            internalType: 'bool',
-            name: 'isFrozen',
-            type: 'bool',
-          },
+            "internalType": "bool",
+            "name": "isFrozen",
+            "type": "bool"
+          }
         ],
-        internalType: 'struct AaveLendingPoolInteractor.ReserveConfiguration',
-        name: '',
-        type: 'tuple',
-      },
+        "internalType": "struct AaveLendingPoolInteractor.ReserveConfiguration",
+        "name": "",
+        "type": "tuple"
+      }
     ],
-    stateMutability: 'view',
-    type: 'function',
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: 'address',
-        name: 'asset',
-        type: 'address',
-      },
+        "internalType": "address",
+        "name": "asset",
+        "type": "address"
+      }
     ],
-    name: 'getReserveData',
-    outputs: [
+    "name": "getReserveData",
+    "outputs": [
       {
-        components: [
+        "components": [
           {
-            components: [
+            "components": [
               {
-                internalType: 'uint256',
-                name: 'data',
-                type: 'uint256',
-              },
+                "internalType": "uint256",
+                "name": "data",
+                "type": "uint256"
+              }
             ],
-            internalType: 'struct DataTypes.ReserveConfigurationMap',
-            name: 'configuration',
-            type: 'tuple',
+            "internalType": "struct DataTypes.ReserveConfigurationMap",
+            "name": "configuration",
+            "type": "tuple"
           },
           {
-            internalType: 'uint128',
-            name: 'liquidityIndex',
-            type: 'uint128',
+            "internalType": "uint128",
+            "name": "liquidityIndex",
+            "type": "uint128"
           },
           {
-            internalType: 'uint128',
-            name: 'currentLiquidityRate',
-            type: 'uint128',
+            "internalType": "uint128",
+            "name": "currentLiquidityRate",
+            "type": "uint128"
           },
           {
-            internalType: 'uint128',
-            name: 'variableBorrowIndex',
-            type: 'uint128',
+            "internalType": "uint128",
+            "name": "variableBorrowIndex",
+            "type": "uint128"
           },
           {
-            internalType: 'uint128',
-            name: 'currentVariableBorrowRate',
-            type: 'uint128',
+            "internalType": "uint128",
+            "name": "currentVariableBorrowRate",
+            "type": "uint128"
           },
           {
-            internalType: 'uint128',
-            name: 'currentStableBorrowRate',
-            type: 'uint128',
+            "internalType": "uint128",
+            "name": "currentStableBorrowRate",
+            "type": "uint128"
           },
           {
-            internalType: 'uint40',
-            name: 'lastUpdateTimestamp',
-            type: 'uint40',
+            "internalType": "uint40",
+            "name": "lastUpdateTimestamp",
+            "type": "uint40"
           },
           {
-            internalType: 'uint16',
-            name: 'id',
-            type: 'uint16',
+            "internalType": "uint16",
+            "name": "id",
+            "type": "uint16"
           },
           {
-            internalType: 'address',
-            name: 'aTokenAddress',
-            type: 'address',
+            "internalType": "address",
+            "name": "aTokenAddress",
+            "type": "address"
           },
           {
-            internalType: 'address',
-            name: 'stableDebtTokenAddress',
-            type: 'address',
+            "internalType": "address",
+            "name": "stableDebtTokenAddress",
+            "type": "address"
           },
           {
-            internalType: 'address',
-            name: 'variableDebtTokenAddress',
-            type: 'address',
+            "internalType": "address",
+            "name": "variableDebtTokenAddress",
+            "type": "address"
           },
           {
-            internalType: 'address',
-            name: 'interestRateStrategyAddress',
-            type: 'address',
+            "internalType": "address",
+            "name": "interestRateStrategyAddress",
+            "type": "address"
           },
           {
-            internalType: 'uint128',
-            name: 'accruedToTreasury',
-            type: 'uint128',
+            "internalType": "uint128",
+            "name": "accruedToTreasury",
+            "type": "uint128"
           },
           {
-            internalType: 'uint128',
-            name: 'unbacked',
-            type: 'uint128',
+            "internalType": "uint128",
+            "name": "unbacked",
+            "type": "uint128"
           },
           {
-            internalType: 'uint128',
-            name: 'isolationModeTotalDebt',
-            type: 'uint128',
-          },
+            "internalType": "uint128",
+            "name": "isolationModeTotalDebt",
+            "type": "uint128"
+          }
         ],
-        internalType: 'struct DataTypes.ReserveData',
-        name: '',
-        type: 'tuple',
-      },
+        "internalType": "struct DataTypes.ReserveData",
+        "name": "",
+        "type": "tuple"
+      }
     ],
-    stateMutability: 'view',
-    type: 'function',
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: 'address',
-        name: 'asset',
-        type: 'address',
-      },
+        "internalType": "address",
+        "name": "asset",
+        "type": "address"
+      }
     ],
-    name: 'getReserveTokensAddresses',
-    outputs: [
+    "name": "getReserveTokensAddresses",
+    "outputs": [
       {
-        internalType: 'address',
-        name: 'aTokenAddress',
-        type: 'address',
+        "internalType": "address",
+        "name": "aTokenAddress",
+        "type": "address"
       },
       {
-        internalType: 'address',
-        name: 'stableDebtTokenAddress',
-        type: 'address',
+        "internalType": "address",
+        "name": "stableDebtTokenAddress",
+        "type": "address"
       },
       {
-        internalType: 'address',
-        name: 'variableDebtTokenAddress',
-        type: 'address',
-      },
+        "internalType": "address",
+        "name": "variableDebtTokenAddress",
+        "type": "address"
+      }
     ],
-    stateMutability: 'view',
-    type: 'function',
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [],
-    name: 'getReservesList',
-    outputs: [
+    "inputs": [],
+    "name": "getReservesList",
+    "outputs": [
       {
-        internalType: 'address[]',
-        name: '',
-        type: 'address[]',
-      },
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
     ],
-    stateMutability: 'view',
-    type: 'function',
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: 'address',
-        name: 'reserve',
-        type: 'address',
+        "internalType": "address",
+        "name": "reserve",
+        "type": "address"
       },
       {
-        internalType: 'address',
-        name: 'wallet',
-        type: 'address',
-      },
+        "internalType": "address",
+        "name": "wallet",
+        "type": "address"
+      }
     ],
-    name: 'getStableDebtTokenDataAndBalance',
-    outputs: [
+    "name": "getStableDebtTokenDataAndBalance",
+    "outputs": [
       {
-        components: [
+        "components": [
           {
-            internalType: 'string',
-            name: 'symbol',
-            type: 'string',
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
           },
           {
-            internalType: 'address',
-            name: 'tokenAddress',
-            type: 'address',
+            "internalType": "address",
+            "name": "tokenAddress",
+            "type": "address"
           },
           {
-            internalType: 'uint8',
-            name: 'decimals',
-            type: 'uint8',
-          },
+            "internalType": "uint8",
+            "name": "decimals",
+            "type": "uint8"
+          }
         ],
-        internalType: 'struct AaveLendingPoolInteractor.TokenData',
-        name: '',
-        type: 'tuple',
+        "internalType": "struct AaveLendingPoolInteractor.TokenData",
+        "name": "",
+        "type": "tuple"
       },
       {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       },
       {
-        components: [
+        "components": [
           {
-            internalType: 'uint256',
-            name: 'variableBorrowRate',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "variableBorrowRate",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'liquidityRate',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "liquidityRate",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'ltv',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "ltv",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'liquidationThreshold',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "liquidationThreshold",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'reserveFactor',
-            type: 'uint256',
-          },
+            "internalType": "uint256",
+            "name": "reserveFactor",
+            "type": "uint256"
+          }
         ],
-        internalType: 'struct AaveLendingPoolInteractor.AdditionalData',
-        name: '',
-        type: 'tuple',
-      },
+        "internalType": "struct AaveLendingPoolInteractor.AdditionalData",
+        "name": "",
+        "type": "tuple"
+      }
     ],
-    stateMutability: 'view',
-    type: 'function',
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: 'address',
-        name: 'user',
-        type: 'address',
-      },
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
     ],
-    name: 'getTotalBalanceDebt',
-    outputs: [
+    "name": "getTotalBalanceDebt",
+    "outputs": [
       {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
     ],
-    stateMutability: 'view',
-    type: 'function',
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: 'address',
-        name: 'asset',
-        type: 'address',
-      },
+        "internalType": "address",
+        "name": "asset",
+        "type": "address"
+      }
     ],
-    name: 'getTotalDebt',
-    outputs: [
+    "name": "getTotalDebt",
+    "outputs": [
       {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
     ],
-    stateMutability: 'view',
-    type: 'function',
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: 'address',
-        name: 'user',
-        type: 'address',
-      },
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
     ],
-    name: 'getUserAccountData',
-    outputs: [
+    "name": "getUserAccountData",
+    "outputs": [
       {
-        internalType: 'uint256',
-        name: 'totalCollateralETH',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "totalCollateralETH",
+        "type": "uint256"
       },
       {
-        internalType: 'uint256',
-        name: 'totalDebtETH',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "totalDebtETH",
+        "type": "uint256"
       },
       {
-        internalType: 'uint256',
-        name: 'availableBorrowsETH',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "availableBorrowsETH",
+        "type": "uint256"
       },
       {
-        internalType: 'uint256',
-        name: 'currentLiquidationThreshold',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "currentLiquidationThreshold",
+        "type": "uint256"
       },
       {
-        internalType: 'uint256',
-        name: 'ltv',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "ltv",
+        "type": "uint256"
       },
       {
-        internalType: 'uint256',
-        name: 'healthFactor',
-        type: 'uint256',
-      },
+        "internalType": "uint256",
+        "name": "healthFactor",
+        "type": "uint256"
+      }
     ],
-    stateMutability: 'view',
-    type: 'function',
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: 'address',
-        name: 'asset',
-        type: 'address',
+        "internalType": "address",
+        "name": "asset",
+        "type": "address"
       },
       {
-        internalType: 'address',
-        name: 'user',
-        type: 'address',
-      },
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
     ],
-    name: 'getUserReserveData',
-    outputs: [
+    "name": "getUserReserveData",
+    "outputs": [
       {
-        internalType: 'uint256',
-        name: 'currentATokenBalance',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "currentATokenBalance",
+        "type": "uint256"
       },
       {
-        internalType: 'uint256',
-        name: 'currentStableDebt',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "currentStableDebt",
+        "type": "uint256"
       },
       {
-        internalType: 'uint256',
-        name: 'currentVariableDebt',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "currentVariableDebt",
+        "type": "uint256"
       },
       {
-        internalType: 'uint256',
-        name: 'principalStableDebt',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "principalStableDebt",
+        "type": "uint256"
       },
       {
-        internalType: 'uint256',
-        name: 'scaledVariableDebt',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "scaledVariableDebt",
+        "type": "uint256"
       },
       {
-        internalType: 'uint256',
-        name: 'stableBorrowRate',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "stableBorrowRate",
+        "type": "uint256"
       },
       {
-        internalType: 'uint256',
-        name: 'liquidityRate',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "liquidityRate",
+        "type": "uint256"
       },
       {
-        internalType: 'uint40',
-        name: 'stableRateLastUpdated',
-        type: 'uint40',
+        "internalType": "uint40",
+        "name": "stableRateLastUpdated",
+        "type": "uint40"
       },
       {
-        internalType: 'bool',
-        name: 'usageAsCollateralEnabled',
-        type: 'bool',
-      },
+        "internalType": "bool",
+        "name": "usageAsCollateralEnabled",
+        "type": "bool"
+      }
     ],
-    stateMutability: 'view',
-    type: 'function',
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: 'address',
-        name: 'reserve',
-        type: 'address',
+        "internalType": "address",
+        "name": "reserve",
+        "type": "address"
       },
       {
-        internalType: 'address',
-        name: 'wallet',
-        type: 'address',
-      },
+        "internalType": "address",
+        "name": "wallet",
+        "type": "address"
+      }
     ],
-    name: 'getVariableDebtTokenDataAndBalance',
-    outputs: [
+    "name": "getVariableDebtTokenDataAndBalance",
+    "outputs": [
       {
-        components: [
+        "components": [
           {
-            internalType: 'string',
-            name: 'symbol',
-            type: 'string',
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
           },
           {
-            internalType: 'address',
-            name: 'tokenAddress',
-            type: 'address',
+            "internalType": "address",
+            "name": "tokenAddress",
+            "type": "address"
           },
           {
-            internalType: 'uint8',
-            name: 'decimals',
-            type: 'uint8',
-          },
+            "internalType": "uint8",
+            "name": "decimals",
+            "type": "uint8"
+          }
         ],
-        internalType: 'struct AaveLendingPoolInteractor.TokenData',
-        name: '',
-        type: 'tuple',
+        "internalType": "struct AaveLendingPoolInteractor.TokenData",
+        "name": "",
+        "type": "tuple"
       },
       {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       },
       {
-        components: [
+        "components": [
           {
-            internalType: 'uint256',
-            name: 'variableBorrowRate',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "variableBorrowRate",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'liquidityRate',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "liquidityRate",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'ltv',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "ltv",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'liquidationThreshold',
-            type: 'uint256',
+            "internalType": "uint256",
+            "name": "liquidationThreshold",
+            "type": "uint256"
           },
           {
-            internalType: 'uint256',
-            name: 'reserveFactor',
-            type: 'uint256',
-          },
+            "internalType": "uint256",
+            "name": "reserveFactor",
+            "type": "uint256"
+          }
         ],
-        internalType: 'struct AaveLendingPoolInteractor.AdditionalData',
-        name: '',
-        type: 'tuple',
-      },
+        "internalType": "struct AaveLendingPoolInteractor.AdditionalData",
+        "name": "",
+        "type": "tuple"
+      }
     ],
-    stateMutability: 'view',
-    type: 'function',
-  },
+    "stateMutability": "view",
+    "type": "function"
+  }
 ];
 
 export const contractAbi = [
@@ -1767,6 +1690,49 @@ export const contractWriteAbi = [
   },
 ];
 
+export const abi = [
+  {
+    type: 'function',
+    name: 'approve',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'spender', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    outputs: [{ type: 'bool' }],
+  },
+  {
+    type: 'function',
+    name: 'transferFrom',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'sender', type: 'address' },
+      { name: 'recipient', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    outputs: [{ type: 'bool' }],
+  },
+  {
+    type: 'event',
+    name: 'Approval',
+    inputs: [
+      { indexed: true, name: 'owner', type: 'address' },
+      { indexed: true, name: 'spender', type: 'address' },
+      { indexed: false, name: 'value', type: 'uint256' },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'function',
+    name: 'balanceOf',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'account', type: 'address' },
+    ],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+];
+
 export const contractWriteAddress =
-  '0x734019e62793afEc23628280444222dbA643bB8A';
+  '0xb9Ff5De16D031510de349E6a14F61E82309D798a';
 

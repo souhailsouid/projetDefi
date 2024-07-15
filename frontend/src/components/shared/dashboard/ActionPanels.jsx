@@ -1,14 +1,14 @@
 import React from 'react';
 import { SelectField } from '@/components/shared/forms/SelectField';
 import SelectContentFromAction from '@/components/shared/forms/SelectContentFromAction';
-import { Button } from '@/components/ui/button';
 import SelectAsset from '@/components/shared/forms/SelectAsset';
-import { SupplyButton } from '@/components/shared/forms/SupplyButton';
-import { WithdrawButton } from '@/components/shared/forms/withdraw';
-import { RepayButton } from '@/components/shared/forms/repayButton';
+
 import { useGetVariableDebtTokenDataAndBalance } from '@/hooks/useGetVariableDebtTokenDataAndBalance';
 import { DialogAssets } from '@/components/shared/dashboard/globalMonitoring/dialogAssets';
 import { useGetATokenDataAndBalance } from '@/hooks/useGetATokenDataAndBalance';
+import { Withdraw } from '@/components/shared/withdraw';
+import { Deposit } from '@/components/shared/deposit';
+import { Repay } from '@/components/shared/repay';
 const ActionPanel = ({
   setActionContent,
   setAssetSelected,
@@ -57,9 +57,9 @@ const ActionPanel = ({
           setAssetSelected={setAssetSelected}
           width="w-[180px]"
         />
-        <RepayButton />
-        <SupplyButton />
-        <WithdrawButton />
+        <Deposit />
+        <Withdraw />
+        <Repay />
       </div>
 
       <div className="flex flex-wrap space-x-4 p-4 bg-white border-t border-gray-300">
