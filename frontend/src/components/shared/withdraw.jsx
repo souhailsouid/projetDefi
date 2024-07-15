@@ -84,11 +84,12 @@ export function Withdraw() {
         'Please select the asset and enter the amount to continue..'
       );
     }
-    if (Atoken?.balance < tokenNumber) {
-      return toast.error(
-        `You can not withdraw more than your balance ${Atoken?.balance} ${Atoken?.symbol}`
-      );
-    } else {
+    // if (Atoken?.balance < tokenNumber) {
+    //   return toast.error(
+    //     `You can not withdraw more than your balance ${Atoken?.balance} ${Atoken?.symbol}`
+    //   );
+    // }
+    else {
       setIsDisabledApproveButton(true);
       setIsApprovingLoading(true);
       setIsApproving(true);
